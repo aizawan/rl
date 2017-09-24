@@ -5,6 +5,8 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import gym
+from gym import wrappers
 
 from rl.utils import make_dirs
 
@@ -17,7 +19,7 @@ class Master:
                  env_name,
                  model_name,
                  snapshot,
-                 graph_dir='./output/graph', 
+                 graph_dir='./output/graph',
                  model_dir='./output/trained_model'):
 
         self.agent = agent
@@ -62,7 +64,7 @@ class Master:
 
                     message = "[{}/{}] ".format(self.env_name, self.model_name) + \
                               "episode: {} ".format(episode) + \
-                              "score: {} ".format(score) + \
+                              "score: {:.3f} ".format(score) + \
                               "mean score: {:.3f} ".format(np.mean(scores[-min(10, len(scores)):])) + \
                               "memory length: {} ".format(len(self.agent.memory)) + \
                               "epsilon: {:.3f}".format(self.agent.policy.epsilon)
@@ -76,3 +78,21 @@ class Master:
             return np.reshape(state, [1, -1])
         elif len(state.shape) == 3:
             return state[np.newaxis, :, :, :]
+
+    def monitor(self, test_episode=5, video_path='./output/video', render=False):
+        video_path = os.path.join(video_path, self.env_name, self.model_name)
+        for i in range(test_episode):
+            print("Recording {} episode...".format(i))
+            env = wrappers.Monitor(self.env, video_path + '/episode-{}'.format(i), force=True)
+            state = env.reset()
+            state = self.make_state(state)
+            continue_game = True
+
+            while continue_game:
+                env.render()
+                action = self.agent.get_action(state)
+                next_state, reward, done, info = env.step(action)
+                next_state = self.make_state(next_state)
+                
+                continue_game = not done
+

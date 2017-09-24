@@ -21,7 +21,6 @@ def mlp(input_dim, output_dim, loss, optimizer):
                     kernel_initializer='he_uniform'))
     model.add(Dense(output_dim, activation='linear',
                     kernel_initializer='he_uniform'))
-    model.summary()
     model.compile(loss=loss, optimizer=optimizer)
     return model
 
@@ -55,3 +54,4 @@ master = Master(
     snapshot=50)
 
 master.play(render=False)
+master.monitor(render=True)
