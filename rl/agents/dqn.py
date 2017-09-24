@@ -42,6 +42,7 @@ class DQNAgent(Agent):
                 random_action=random.randrange(self.action_size))
 
     def train_model(self, state, action, reward, next_state, done):
+        reward = self.clip_reward(reward)
         self.memory.append(state, action, reward, next_state, done)
 
         if len(self.memory) < self.train_start:
@@ -61,3 +62,6 @@ class DQNAgent(Agent):
 
         self.model.fit(minibatch[0], target, batch_size=self.batch_size,
                        epochs=1, verbose=0)
+
+    def clip_reward(self, reward, reward_min=-1., reward_max=1.):
+        return np.clip(reward, reward_min, reward_max)
