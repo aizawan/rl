@@ -1,5 +1,5 @@
 # rl
-TensorFlow implementation of deep reinforcement learning.
+TensorFlow implementation of deep reinforcement learning papers for study.
 
 
 ### reference
