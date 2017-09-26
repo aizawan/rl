@@ -25,7 +25,7 @@ def mlp(input_dim, output_dim, loss, optimizer):
     return model
 
 
-env = gym.make('CartPole-v1')
+env = gym.make('CartPole-v0')
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
@@ -49,7 +49,7 @@ master = Master(
     agent=agent,
     env=env,
     episodes=300,
-    env_name='CartPole-v1',
+    env_name='CartPole-v0',
     model_name='dqn_mlp',
     snapshot=50)
 
