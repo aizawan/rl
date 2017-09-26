@@ -79,20 +79,21 @@ class Master:
         elif len(state.shape) == 3:
             return state[np.newaxis, :, :, :]
 
-    def monitor(self, test_episode=5, video_path='./output/video', render=False):
+    def monitor(self, test_episode=10, video_path='./output/video', render=False):
         video_path = os.path.join(video_path, self.env_name, self.model_name)
+        self.env = wrappers.Monitor(self.env, video_path, force=True,
+                                    video_callable=lambda episode_id: True)
+
         for i in range(test_episode):
-            print("Recording {} episode...".format(i))
-            env = wrappers.Monitor(self.env, video_path + '/episode-{}'.format(i), force=True)
-            state = env.reset()
+            state = self.env.reset()
             state = self.make_state(state)
             continue_game = True
 
+            print("Recording {} episode...".format(i))
             while continue_game:
-                env.render()
+                self.env.render()
                 action = self.agent.get_action(state)
-                next_state, reward, done, info = env.step(action)
+                next_state, reward, done, info = self.env.step(action)
                 next_state = self.make_state(next_state)
                 
                 continue_game = not done
-
